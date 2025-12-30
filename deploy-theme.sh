@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -uo pipefail
 : "${TMPDIR:=$(mktemp -d)}"
+trap 'rm -rf "$TMPDIR"' EXIT
+
 
 script_dir="$(cd -- "$(dirname -- "$0")" && pwd -P)"
 config_file="$script_dir/deploy-theme.cfg"
@@ -132,9 +134,11 @@ cat "$CHANGELOG_FILE" >> "$temp_readme"
 [[ -f "$readme_file" ]] && cp -f "$readme_file" "$readme_file.bak"
 mv -f "$temp_readme" "$readme_file"
 
-# Git commit/push
-pushd "$theme_dir" >/dev/null
-git add -A
+# Git commit/push (REPO ROOT) so uupd/ is included
+pushd "$repo_root" >/dev/null
+
+git add -A "$THEME_SLUG" "uupd" "$CHANGELOG_FILE" "$STATIC_FILE"
+
 if ! git diff --cached --quiet; then
   git commit -m "Version $version Release"
   git push origin main
@@ -142,7 +146,13 @@ if ! git diff --cached --quiet; then
 else
   echo "[INFO] No changes to commit."
 fi
+
+# Ensure tag points to this commit (important for release tag)
+git tag -f "v$version"
+git push origin "v$version" --force
+
 popd >/dev/null
+
 
 # Zip theme folder
 zip_file="$script_dir/$ZIP_NAME"
@@ -218,11 +228,40 @@ JSON
   echo "[OK] Using Release ID: $release_id"
 
   asset_name="$(basename "$zip_file")"
+
+  # Delete existing asset with same name (prevents 422 already_exists)
+  assets_json="$TMPDIR/assets.json"
+  curl -sS \
+    -H "Authorization: token $GITHUB_TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/$GITHUB_REPO/releases/$release_id/assets" > "$assets_json"
+
+  existing_asset_id="$(python - <<'PY' "$assets_json" "$asset_name"
+import json,sys
+p=sys.argv[1]; name=sys.argv[2]
+data=json.load(open(p,'r',encoding='utf-8'))
+for a in data:
+    if a.get('name')==name:
+        print(a.get('id',''))
+        break
+PY
+)"
+
+  if [[ -n "$existing_asset_id" ]]; then
+    echo "[INFO] Deleting existing asset id=$existing_asset_id"
+    curl -sS -X DELETE \
+      -H "Authorization: token $GITHUB_TOKEN" \
+      -H "Accept: application/vnd.github+json" \
+      "https://api.github.com/repos/$GITHUB_REPO/releases/assets/$existing_asset_id" >/dev/null
+  fi
+
+  echo "[INFO] Uploading asset: $asset_name"
   curl -sS -X POST "https://uploads.github.com/repos/$GITHUB_REPO/releases/$release_id/assets?name=$asset_name" \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github+json" \
     -H "Content-Type: application/zip" \
     --data-binary @"$zip_file" >/dev/null
+
 
   rm -f "$body_file"
 fi

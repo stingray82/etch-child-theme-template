@@ -125,6 +125,26 @@ if not defined RELEASE_ID (
 echo [OK] Using Release ID: !RELEASE_ID!
 echo [INFO] Uploading asset: %ZIP_NAME%
 
+REM ---- DELETE EXISTING ASSET WITH SAME NAME ----
+echo [INFO] Checking for existing asset named %ZIP_NAME% to replace...
+
+curl -s -H "Authorization: token %GITHUB_TOKEN%" -H "Accept: application/vnd.github+json" ^
+  "https://api.github.com/repos/%GITHUB_REPO%/releases/!RELEASE_ID!/assets" > "%TEMP%\github_assets.json"
+
+for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command ^
+  "$a = Get-Content '%TEMP%\github_assets.json' -Raw | ConvertFrom-Json; " ^
+  "$m = $a | Where-Object { $_.name -eq '%ZIP_NAME%' } | Select-Object -First 1; " ^
+  "if ($m) { $m.id }"`) do set "ASSET_ID=%%A"
+
+if defined ASSET_ID (
+  echo [INFO] Deleting existing asset id=!ASSET_ID!
+  curl -s -X DELETE -H "Authorization: token %GITHUB_TOKEN%" -H "Accept: application/vnd.github+json" ^
+    "https://api.github.com/repos/%GITHUB_REPO%/releases/assets/!ASSET_ID!" >nul
+) else (
+  echo [INFO] No existing asset to delete.
+)
+
+
 curl -s -X POST -H "Authorization: token %GITHUB_TOKEN%" -H "Accept: application/vnd.github+json" -H "Content-Type: application/zip" --data-binary "@%ZIP_FILE%" "https://uploads.github.com/repos/%GITHUB_REPO%/releases/!RELEASE_ID!/assets?name=%ZIP_NAME%" > "%TEMP%\github_upload_response.json"
 
 echo [DEBUG] Upload response:
@@ -255,6 +275,37 @@ pushd "%PARENT_DIR%"
 popd
 
 echo [OK] Zipped to: %ZIP_FILE%
+
+
+REM =====================================================
+REM GIT COMMIT/PUSH (REPO ROOT) so uupd/ is included
+REM =====================================================
+echo [INFO] Committing & pushing generated updates to GitHub...
+
+pushd "%REPO_ROOT%" || (echo [ERROR] Failed to enter repo root & exit /b 1)
+
+REM Make sure git exists
+where git >nul 2>&1 || (echo [ERROR] git not found on PATH. & popd & exit /b 1)
+
+REM Stage BOTH theme + uupd + any root files you generate
+git add -A "%THEME_SLUG%" "uupd" "%CHANGELOG_FILE%" "%STATIC_FILE%" >nul 2>&1
+
+REM Commit only if there are staged changes
+git diff --cached --quiet
+if errorlevel 1 (
+  git commit -m "Version %version% Release" || (echo [ERROR] git commit failed. & popd & exit /b 1)
+  git push origin main || (echo [ERROR] git push failed. & popd & exit /b 1)
+  echo [OK] Repo commit/push complete.
+) else (
+  echo [INFO] No repo changes to commit.
+)
+
+REM Ensure the git tag exists and points at HEAD (this is key)
+git tag -f "v%version%" || (echo [ERROR] git tag failed. & popd & exit /b 1)
+git push origin "v%version%" --force || (echo [ERROR] pushing tag failed. & popd & exit /b 1)
+
+popd
+
 
 REM DEPLOY
 IF /I "%DEPLOY_TARGET%"=="github" (
