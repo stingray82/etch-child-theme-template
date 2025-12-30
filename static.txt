@@ -1,0 +1,21 @@
+== Description ==
+A Child Theme for "Business Name" based on Etch
+
+== Installation ==
+1. Upload the theme folder to `/wp-content/themes/`
+2. Activate the theme via **Appearance → Themes**
+3. Optional: Customize via **Appearance → Customize**
+
+== Features ==
+
+
+== Customization ==
+
+
+== Support ==
+For support, documentation, and updates visit:
+https://thanet.digital/
+
+== License ==
+GPL-3.0-or-later  
+https://www.gnu.org/licenses/gpl-3.0.html

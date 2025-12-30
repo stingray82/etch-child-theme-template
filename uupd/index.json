@@ -1,0 +1,31 @@
+{
+    "type": "theme",
+    "slug": "etch-child-theme-template",
+    "name": "Clients Website",
+    "version": "1.0.0",
+    "author": "Thanet Digital",
+    "author_homepage": "https://thanet.digital",
+    "homepage": "https://thanet.digital",
+    "requires_php": "8.0",
+    "requires": "6.9",
+    "tested": "6.9",
+    "sections": {
+        "description": "A Child Theme for \"Business Name\" based on Etch",
+        "installation": "1. Upload the theme folder to `/wp-content/themes/`<br />\r\n2. Activate the theme via **Appearance \u2192 Themes**<br />\r\n3. Optional: Customize via **Appearance \u2192 Customize**",
+        "features": "",
+        "customization": "",
+        "support": "For support, documentation, and updates visit:<br />\r\nhttps://thanet.digital/",
+        "license": "GPL-3.0-or-later  <br />\r\nhttps://www.gnu.org/licenses/gpl-3.0.html",
+        "changelog": "= 1.0.0 =<br />\n* Initial release"
+    },
+    "last_updated": "2025-12-30 14:47:53",
+    "download_url": "https://github.com/stingray82/etch-child-theme-template/releases/latest/download/etch-child-theme.zip",
+    "banners": {
+        "low": "https://raw.githubusercontent.com/stingray82/etch-child-theme-template/main/uupd/banner-772x250.png",
+        "high": "https://raw.githubusercontent.com/stingray82/etch-child-theme-template/main/uupd/banner-1544x500.png"
+    },
+    "icons": {
+        "1x": "https://raw.githubusercontent.com/stingray82/etch-child-theme-template/main/uupd/icon-128.png",
+        "2x": "https://raw.githubusercontent.com/stingray82/etch-child-theme-template/main/uupd/icon-256.png"
+    }
+}
