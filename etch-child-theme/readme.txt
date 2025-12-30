@@ -1,39 +1,36 @@
-== Etch Child Theme ==
-
-Contributors: Digital Gravy
+=== Your Company Theme ===
+Contributors: reallyusefulplugins
+Donate link: https://reallyusefulplugins.com/donate
+Tags: Company, blog, Thanet.Digital
 Requires at least: 6.9
 Tested up to: 6.9
+Stable tag: 1.0.0
 Requires PHP: 8.0
-License: GPLv3 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.txt
-
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
+A Child Theme for "Business Name" based on Etch
 
-This theme is a child theme for Etch theme
+== Installation ==
+1. Upload the theme folder to `/wp-content/themes/`
+2. Activate the theme via **Appearance → Themes**
+3. Optional: Customize via **Appearance → Customize**
 
+== Features ==
+
+
+== Customization ==
+
+
+== Support ==
+For support, documentation, and updates visit:
+https://thanet.digital/
+
+== License ==
+GPL-3.0-or-later  
+https://www.gnu.org/licenses/gpl-3.0.html
 
 == Changelog ==
-
 = 1.0.0 =
 * Initial release
-
-
-== Copyright ==
-
-Etch Child Theme, (C) 2025 Digital Gravy
-Etch Child Theme is distributed under the terms of the GNU GPL.
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-
-Etch Child Theme is a child theme of Etch Theme (https://etchwp.com/), (C) Digital Gravy, [GPL v3 or later](http://www.gnu.org/licenses/gpl-3.0.txt)
-
