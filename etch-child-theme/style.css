@@ -14,6 +14,22 @@ Text Domain: etch-child-theme
 Tags: Etch
 */
 
+/* Etch Builder Tweaks */
+#etch-builder {
+    /* etch primary color -> atomic green */
+    --e-primary: oklch(0.9117 0.1632 117.75);
+
+    /* structure builder selected item colors */
+    .etch-builder-accordion__header--selected:not(.etch-builder-accordion__header--component) {
+        --e-structure-item-header-accent-color: color-mix(in oklch, white 20%, var(--e-primary));
+        --e-structure-item-header-foreground-color: var(--base);
+        
+    }
+    .etch-builder-accordion__item:has(.etch-builder-accordion__header--selected:not(.etch-builder-accordion__header--component)) {
+        --e-structure-group-background-color: color-mix(in oklch, transparent 98%, var(--e-primary));
+    }
+}
+
 
 
 
